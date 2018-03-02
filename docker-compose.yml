@@ -1,0 +1,5 @@
+docker-service:
+  build: .
+  environment:        
+    - CONTAINER_VAR1=4711
+    - CONTAINER_VAR2=blabla

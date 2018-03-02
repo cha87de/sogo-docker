@@ -1,0 +1,110 @@
+#!/bin/env bash
+
+# include bpkg  dependencies
+source /usr/local/bin/retry
+source /usr/local/bin/bgo
+source /usr/local/bin/bgowait
+
+# global variables
+GLOBAL_VAR="xyz"
+
+##############################################################################
+# validate if all container variables are set
+##############################################################################
+function validate(){
+    vars="CONTAINER_VAR1 CONTAINER_VAR2"
+    for var in $vars; do
+        if [[ $(env | awk -F "=" '{print $1}' | grep "^$var$") != "$var" ]]; then
+            echo "$var not set but required."
+            return 1
+        fi
+    done
+    if [[ -z ${GLOBAL_VAR+x} ]]; then
+        echo "GLOBAL_VAR variable cannot be looked up."
+        return 1
+    fi       
+}
+
+##############################################################################
+# write config vars with configfile template
+##############################################################################
+function writeConfigOptions(){
+    echo "write config options"
+    export GLOBAL_VAR=$GLOBAL_VAR
+    export CONTAINER_VAR1=$CONTAINER_VAR1
+    export CONTAINER_VAR2=$CONTAINER_VAR2
+    cat /etc/docker-conf/configfile.conf.tmpl \
+        | envsubst > /etc/docker-conf/configfile.conf
+}
+function init(){
+
+    ## pre-config initialization
+
+    # write file based config options
+    writeConfigOptions
+
+    ## post-config initialization
+}
+
+##############################################################################
+function function_service(){
+    # whatever blocking call
+    tail -f /dev/null
+}
+function start(){
+    echo "starting applications..."
+    bgo service1 service2 function_service
+    if [[ $? != 0 ]]; then
+        echo "start failed. exiting now." >&2
+        exit 1
+    fi
+}
+
+##############################################################################
+function configure(){
+    echo "configure: ..."
+    ## post-start configuration via service
+}
+
+##############################################################################
+function main(){
+    # validate env vars
+    validate
+    if [[ $? != 0 ]]; then 
+        echo "validation failed. exiting now." >&2
+        exit 1
+    fi
+
+    # initialize
+    init
+    if [[ $? != 0 ]]; then 
+        echo "init failed. exiting now." >&2
+        exit 1
+    fi
+
+    # start
+    start 
+    if [[ $? != 0 ]]; then
+        echo "start failed. exiting now." >&2
+        exit 1
+    fi    
+
+    # configure
+    retry 5 5 "configure failed." configure
+    if [[ $? != 0 ]]; then
+        echo "cannot run configure." >&2
+        exit 1
+    fi
+
+    # wait
+    echo "done. now waiting for services."
+    #freq=5; waitForN=-1; killTasks=0 # fail one, ignore (development mode)
+    freq=5; waitForN=1; killTasks=1 #fail one, fail all (production mode)
+    bgowait $freq $waitForN $killTasks
+}
+
+if [[ "$1" == "" ]]; then
+    main
+else
+    exec "$@"
+fi
