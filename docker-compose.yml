@@ -1,5 +1,15 @@
-docker-service:
+sogo:
   build: .
   environment:        
-    - CONTAINER_VAR1=4711
-    - CONTAINER_VAR2=blabla
+    - DB_USERPROFILES=mysql://sogo:pass@localhost:3361/sogo/sogo_user_profile
+    - DB_FOLDERINFO=mysql://sogo:pass@localhost:3361/sogo/sogo_folder_info
+    - DB_SESSIONSFOLDER=mysql://sogo:pass@localhost:3361/sogo/sogo_sessions_folder
+    - DB_USERVIEW=mysql://sogo:pass@localhost:3361/sogo/sogo_view
+    - IMAP_SERVER=imaps://mail.alb-tec.de:993
+    - SIEVE_SERVER=sieve://mail.alb-tec.de:4190
+    - SMTP_SERVER=mail.alb-tec.de
+    - MAILDOMAIN=mail.alb-tec.de
+    - TITLE="alb-TEC SOGO"
+    - LANGUAGE="English"
+    - TIMEZONE="Europe/Berlin"
+    - SUPERUSERS="christopher.hauser@alb-tec.de"

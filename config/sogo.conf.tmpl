@@ -1,0 +1,50 @@
+{
+  /* Database configuration (mysql:// or postgresql://) */
+  SOGoProfileURL = "$DB_USERPROFILES";
+  OCSFolderInfoURL = "$DB_FOLDERINFO";
+  OCSSessionsFolderURL = "$DB_SESSIONSFOLDER";
+
+  /* Mail */
+  SOGoIMAPServer = $IMAP_SERVER;
+  SOGoSieveServer = $SIEVE_SERVER;
+  SOGoSMTPServer = $SMTP_SERVER;
+  SOGoMailDomain = $MAILDOMAIN;
+  SOGoMailingMechanism = smtp;
+
+  /* Notifications */
+  SOGoAppointmentSendEMailNotifications = YES;
+
+  /* Authentication */
+  SOGoPasswordChangeEnabled = YES;
+
+  /* SQL authentication example */
+  /*  These database columns MUST be present in the view/table:
+   *    c_uid - will be used for authentication -  it's the username or username@domain.tld)
+   *    c_name - which can be identical to c_uid -  will be used to uniquely identify entries
+   *    c_password - password of the user, plain-text, md5 or sha encoded for now
+   *    c_cn - the user's common name - such as "John Doe"
+   *    mail - the user's mail address
+   *  See the installation guide for more details
+   */
+  SOGoUserSources =
+    (
+      {
+        type = sql;
+        id = directory;
+        viewURL = "$DB_USERVIEW";
+        canAuthenticate = YES;
+        isAddressBook = YES;
+        userPasswordAlgorithm = md5;
+      }
+    );
+
+  /* Web Interface */
+  SOGoPageTitle = "$TITLE";
+  SOGoSieveScriptsEnabled = YES;
+  SOGoMailAuxiliaryUserAccountsEnabled = YES;
+
+  /* General */
+  SOGoLanguage = $LANGUAGE;
+  SOGoTimeZone = $TIMEZONE; // America/Montreal;
+  SOGoSuperUsernames = ($SUPERUSERS); // This is an array - keep the parens!
+}

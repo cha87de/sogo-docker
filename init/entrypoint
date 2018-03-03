@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 
 # include bpkg  dependencies
 source /usr/local/bin/retry
@@ -6,23 +6,19 @@ source /usr/local/bin/bgo
 source /usr/local/bin/bgowait
 
 # global variables
-GLOBAL_VAR="xyz"
 
 ##############################################################################
 # validate if all container variables are set
 ##############################################################################
 function validate(){
-    vars="CONTAINER_VAR1 CONTAINER_VAR2"
+    vars="DB_USERPROFILES DB_FOLDERINFO DB_SESSIONSFOLDER DB_USERVIEW IMAP_SERVER SIEVE_SERVER SMTP_SERVER MAILDOMAIN TITLE LANGUAGE TIMEZONE SUPERUSERS"
     for var in $vars; do
         if [[ $(env | awk -F "=" '{print $1}' | grep "^$var$") != "$var" ]]; then
             echo "$var not set but required."
             return 1
         fi
     done
-    if [[ -z ${GLOBAL_VAR+x} ]]; then
-        echo "GLOBAL_VAR variable cannot be looked up."
-        return 1
-    fi       
+   
 }
 
 ##############################################################################
@@ -30,14 +26,22 @@ function validate(){
 ##############################################################################
 function writeConfigOptions(){
     echo "write config options"
-    export GLOBAL_VAR=$GLOBAL_VAR
-    export CONTAINER_VAR1=$CONTAINER_VAR1
-    export CONTAINER_VAR2=$CONTAINER_VAR2
-    cat /etc/docker-conf/configfile.conf.tmpl \
-        | envsubst > /etc/docker-conf/configfile.conf
+    export DB_USERPROFILES=$DB_USERPROFILES
+    export DB_FOLDERINFO=$DB_FOLDERINFO
+    export DB_SESSIONSFOLDER=$DB_SESSIONSFOLDER
+    export DB_USERVIEW=$DB_USERVIEW
+    export IMAP_SERVER=$IMAP_SERVER
+    export SIEVE_SERVER=$SIEVE_SERVER
+    export SMTP_SERVER=$SMTP_SERVER
+    export MAILDOMAIN=$MAILDOMAIN
+    export TITLE=$TITLE
+    export LANGUAGE=$LANGUAGE
+    export TIMEZONE=$TIMEZONE
+    export SUPERUSERS=$SUPERUSERS
+    cat /etc/sogo/sogo.conf.tmpl \
+        | envsubst > /etc/sogo/sogo.conf
 }
 function init(){
-
     ## pre-config initialization
 
     # write file based config options
