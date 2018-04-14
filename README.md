@@ -1,22 +1,20 @@
-# docker-skeleton
+# SOGo Docker with nginx
 
-A docker skeleton - with best practice guide for writing dockerfile &amp; entrypoint.
+This project results in a Docker image with SOGo service, served by a nginx proxy.
 
-Assumptions:
- - simple bash based entrypoint
- - one to many services to be configured and started
- - file based configuration files, modified by environment variables
- - reliable, immutable bootstrapping
- - fail fast & retry in entrypoint and for whole container
+Configuration options for SOGo can be specified as environment variables:
 
-Keep it simple. Bash solves all your needs. No complex service or daemon for bootstrapping needed.
-
-
-## Experiences
-
-With the presented approach, we managed to build a real OpenStack test setup - with approx. 30 physical nodes and hence approx. 300 containers in total. 
-
-# TODOs and Extensions
-
-[ ] add side kick container skeleton to host (configuration) data
-[ ] extract execution steps out of entrypoint and allow their definition in simple yaml file
+```
+    - DB_USERPROFILES=mysql://sogo:pass@db:3361/sogo/sogo_user_profile
+    - DB_FOLDERINFO=mysql://sogo:pass@db:3361/sogo/sogo_folder_info
+    - DB_SESSIONSFOLDER=mysql://sogo:pass@db:3361/sogo/sogo_sessions_folder
+    - DB_USERVIEW=mysql://sogo:pass@db:3361/sogo/sogo_view
+    - IMAP_SERVER=imaps://mail.alb-tec.de:993
+    - SIEVE_SERVER=sieve://mail.alb-tec.de:4190
+    - SMTP_SERVER=mail.alb-tec.de
+    - MAILDOMAIN=mail.alb-tec.de
+    - TITLE=alb-TEC SOGO
+    - LANGUAGE=English
+    - TIMEZONE=Europe/Berlin
+    - SUPERUSERS=christopher.hauser@alb-tec.de
+```
