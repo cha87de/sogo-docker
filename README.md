@@ -2,6 +2,8 @@
 
 This project results in a Docker image with SOGo service, served by a nginx proxy.
 
+[Docker-Image available on Docker Hub](https://hub.docker.com/r/cha87de/sogo/)
+
 Configuration options for SOGo can be specified as environment variables:
 
 ```
